@@ -1,5 +1,43 @@
 #!/bin/bash
 
+
+#Install Golang:
+if ! type "go" > /dev/null; then
+   echo "Go is not installed. Installing..."
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+        sudo brew install -y go
+    elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # linux
+        sudo apt-get -y install golang
+    elif [[ "$OSTYPE" == "cygwin" ]]; then
+        # POSIX compatibility layer and Linux environment emulation for Windows:
+        echo "Install go for windows (cygwin)"
+        curl -O https://storage.googleapis.com/golang/go1.4.2.windows-amd64.msi
+        msiexec /i go1.4.2.windows-amd64.msi
+        echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
+    elif [[ "$OSTYPE" == "msys" ]]; then
+        # Lightweight shell and GNU utilities compiled for Windows (part of MinGW):
+        echo "Install go for windows (msys)"
+        curl -O https://storage.googleapis.com/golang/go1.4.2.windows-amd64.msi
+        msiexec /i go1.4.2.windows-amd64.msi
+        echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
+    elif [[ "$OSTYPE" == "win32" ]]; then
+        # windows (win32)):
+        echo "Error: Go is not supported on 32 bit operating systems."
+        exit 1
+    elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        echo "Install go for freebsd systems"
+        sudo pkg install -y go
+        echo "FreeBSD is not supported."
+    else
+        echo "Error: Unknown OS."
+        exit 1
+    fi
+else
+   echo "Go is installed."
+fi
+
 echo "Enter your GitHub username:"
 read username
 
@@ -24,6 +62,8 @@ git remote add origin git@github.com:$username/$repository.git
 
 git push -u origin main
 
+git remote add master
+
 # install the heroku toolbelt
 #wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 curl https://cli-assets.heroku.com/install.sh | sh
@@ -34,8 +74,8 @@ heroku login
 
 # create a new heroku app
 
-heroku create $repository
+heroku create -a $repository
 
 # push the code to heroku
 
-git push heroku master
+git push heroku main
