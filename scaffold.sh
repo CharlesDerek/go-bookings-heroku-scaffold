@@ -58,23 +58,23 @@ for file in *
 do
     if [ -f "$file" ]
     then
-        sed -i 's/bookings-path/$repository/g' "$file"
+        sed -i "s/bookings-path/$repository/g" "$file"
     fi
 done
 
 # create a new golang web app on github
 
-git init
-
-git add .
-
-git commit -m "initial commit"
-
-git branch -M main
-
-git remote add origin git@github.com:$username/$repository.git
-
-git push -u origin main
+if [ -d ".git" ]; then
+    echo "The .git repository has already been initialized."
+else
+    echo "The .git has not been initialized. Initializing..."
+    git init
+    git add .
+    git commit -m "initial commit"
+    git branch -M main
+    git remote add origin git@github.com:$username/$repository.git
+    git push -u origin main
+fi
 
 git remote add master
 
