@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CWD=${PWD##*/}
 
 #Install Golang:
 if ! type "go" > /dev/null; then
@@ -10,6 +11,10 @@ if ! type "go" > /dev/null; then
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         # linux
         sudo apt-get -y install golang
+    elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        echo "Install go for freebsd systems"
+        sudo pkg install -y go
+        echo "FreeBSD is not supported."
     elif [[ "$OSTYPE" == "cygwin" ]]; then
         # POSIX compatibility layer and Linux environment emulation for Windows:
         echo "Install go for windows (cygwin)"
@@ -26,10 +31,6 @@ if ! type "go" > /dev/null; then
         # windows (win32)):
         echo "Error: Go is not supported on 32 bit operating systems."
         exit 1
-    elif [[ "$OSTYPE" == "freebsd"* ]]; then
-        echo "Install go for freebsd systems"
-        sudo pkg install -y go
-        echo "FreeBSD is not supported."
     else
         echo "Error: Unknown OS."
         exit 1
@@ -47,6 +48,19 @@ read repository
 
 echo "Your GitHub username is: $username"
 echo "Your repository name is: $repository"
+
+# Rename CWD && S&R configs to new repository name:
+cd ../
+mv $CWD $repository
+CWD=$repository
+cd $CWD
+for file in *
+do
+    if [ -f "$file" ]
+    then
+        sed -i 's/bookings-path/$repository/g' "$file"
+    fi
+done
 
 # create a new golang web app on github
 

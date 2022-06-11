@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"bookings-udemy/pkg/config"
-	"bookings-udemy/pkg/models"
-	"bookings-udemy/pkg/render"
+	"bookings-path/pkg/config"
+	"bookings-path/pkg/models"
+	"bookings-path/pkg/render"
 	"net/http"
 )
 
